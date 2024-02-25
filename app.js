@@ -36,7 +36,9 @@ function createNewBot(user) {
         bot.loadPlugin(mineflayerCollectBlock);
 
         mcData = require('minecraft-data')(bot.version);
-
+        bot.loadPlugin(require('mineflayer-dashboard'))
+        global.console.log = bot.dashboard.log
+        global.console.error = bot.dashboard.log
         // const mcData = require('minecraft-data')(bot.version)
         let botMovements = new Movements(bot);
         botMovements.canDig = true;
@@ -77,6 +79,7 @@ function createNewBot(user) {
         require('child_process').exec('start http://localhost:8080/'); // OPENING VIEWER - THIS ISNT MALWARE
     });
     bot.on('chat', (username, message) => {
+        console.log(username + ": " + message)
         if (username == bot.username) return;
         if (!message.startsWith("l!")) return;
         let c = message.slice(2);
