@@ -36,7 +36,9 @@ function createNewBot(user) {
         bot.loadPlugin(mineflayerCollectBlock);
 
         mcData = require('minecraft-data')(bot.version);
-
+        bot.loadPlugin(require('mineflayer-dashboard'))
+        global.console.log = bot.dashboard.log
+        global.console.error = bot.dashboard.log
         // const mcData = require('minecraft-data')(bot.version)
         let botMovements = new Movements(bot);
         botMovements.canDig = true;
