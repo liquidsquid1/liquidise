@@ -79,6 +79,7 @@ function createNewBot(user) {
         require('child_process').exec('start http://localhost:8080/'); // OPENING VIEWER - THIS ISNT MALWARE
     });
     bot.on('chat', (username, message) => {
+        console.log(username + ": " + message)
         if (username == bot.username) return;
         if (!message.startsWith("l!")) return;
         let c = message.slice(2);
