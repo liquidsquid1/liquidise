@@ -12,11 +12,9 @@ const mineflayerViewer = require('prismarine-viewer').mineflayer;
 const mineflayerPVP = require('mineflayer-pvp').plugin;
 const mineflayerArmorManager = require('mineflayer-armor-manager');
 const mineflayerCollectBlock = require('mineflayer-collectblock').plugin;
+const AutoAuth = require('mineflayer-auto-auth')
 const { pathfinder, Movements } = require('mineflayer-pathfinder');
 const { GoalNear, GoalFollow } = require('mineflayer-pathfinder').goals;
-
-const prefix = "l!";
-const botUsername = "liquidise0";
 
 let mcData;
 
@@ -25,7 +23,9 @@ function createNewBot(user) {
         host: "localhost",
         port: 25565,
         auth: "offline",
-        username: user
+        username: user,
+        plugins: [AutoAuth],
+        AutoAuth: "liquidise123"
     });
     
     bot.on('spawn', () => {
@@ -68,68 +68,69 @@ function createNewBot(user) {
 
         bot.pathfinder.setMovements(botMovements);
     
-        // UNCOMMENT FOR WEB SERVER!
-        // mineflayerViewer(bot, {
-        //     viewDistance: 4,
-        //     firstPerson: false,
-        //     port: 8080
-        // });
+        mineflayerViewer(bot, {
+            viewDistance: 4,
+            firstPerson: false,
+            port: 8080
+        });
+
+        require('child_process').exec('start http://localhost:8080/'); // OPENING VIEWER - THIS ISNT MALWARE
     });
     bot.on('chat', (username, message) => {
         if (username == bot.username) return;
-        if (!message.startsWith(prefix)) return;
+        if (!message.startsWith("l!")) return;
         let c = message.slice(2);
         let commandArray = c.split(" ");
         
         switch(commandArray[0]) {
             case "hello":
                 bot.chat("hi");
-                break
+                break;
             case "echo":
                 let echoParams = commandArray.shift();
                 bot.chat(commandArray.join(" "));
-                break
+                break;
             case "navigate":
                 bot.chat("Navigating!");
                 bot.pathfinder.setGoal(new GoalNear(commandArray[1], commandArray[2], commandArray[3], 1));
-                break
+                break;
             case "navigate.target":
                 if (!bot.players[commandArray[1]]) {
                     bot.chat("That's not a valid player!");
-                    return
+                    return;
                 }
                 if (bot.players[commandArray[1]] == bot.player) {
                     bot.chat("Hey, that's me!");
-                    return
+                    return;
                 }
                 bot.chat("Navigating!");
                 p = bot.players[commandArray[1]].entity.position;
                 bot.pathfinder.setGoal(new GoalNear(p.x, p.y, p.z, 1));
-                break
+                break;
             case "coords":
                 p = bot.entity.position;
                 bot.chat("X: " + p.x + " Y: " + p.y + " Z: " + p.z);
-                break
+                break;
             case "fight.target":
                 if (!bot.players[commandArray[1]]) {
                     bot.chat("That's not a valid player!");
-                    return
+                    return;
                 }
                 if (bot.players[commandArray[1]] == bot.player) {
                     bot.chat("Hey, that's me!");
-                    return
+                    return;
                 }
                 bot.chat("Now fighting " + bot.players[commandArray[1]].username);
                 bot.pvp.attack(bot.players[commandArray[1]].entity);
-                break
+                break;
             case "fight.stop":
                 bot.chat("No longer fighting.");
                 bot.pvp.stop();
-                break
+                break;
             case "drop":
                 if (bot.inventory.items().length === 0) {
                     bot.chat("I don't have any other items!");
-                    return
+                    return;
                 };
                 bot.chat("Successfully dropped " + bot.inventory.items()[0].displayName);
                 bot.tossStack(bot.inventory.items()[0]);
@@ -137,7 +138,7 @@ function createNewBot(user) {
             case "armor":
                 bot.chat("Instantly equipped armor!");
                 bot.armorManager.equipAll();
-                break
+                break;
             case "bed":
                 bot.chat("Breaking bed!");
                 const bed = bot.findBlock({
@@ -145,15 +146,15 @@ function createNewBot(user) {
                     maxDistance: 64
                 });
                 bot.collectBlock.collect(bed);
-                break
+                break;
             default:
                 bot.chat("Invalid command!");
                 console.log(username + " has sent an invalid command");
-                break
+                break;
         };
     });
     
     bot.on("kicked", console.log);
 }
 
-createNewBot(botUsername);
+createNewBot("liquidise0");
