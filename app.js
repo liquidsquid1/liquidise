@@ -95,8 +95,8 @@ function createNewBot(user) {
                 bot.pathfinder.setGoal(new GoalNear(commandArray[1], commandArray[2], commandArray[3], 1));
                 break;
             case "navigate.target":
-                if (!bot.players[commandArray[1]]) {
-                    bot.chat("That's not a valid player!");
+                if (!bot.players[commandArray[1]].entity) {
+                    bot.chat("That player isn't visible to me!");
                     return;
                 }
                 if (bot.players[commandArray[1]] == bot.player) {
@@ -112,8 +112,8 @@ function createNewBot(user) {
                 bot.chat("X: " + p.x + " Y: " + p.y + " Z: " + p.z);
                 break;
             case "fight.target":
-                if (!bot.players[commandArray[1]]) {
-                    bot.chat("That's not a valid player!");
+                if (!bot.players[commandArray[1]].entity) {
+                    bot.chat("That player isn't visible to me!");
                     return;
                 }
                 if (bot.players[commandArray[1]] == bot.player) {
