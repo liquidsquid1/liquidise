@@ -1,5 +1,8 @@
-# liquidise
-general purpose headless minecraft bot written in javascript
+<h1 align="center">liquidise</h1>
+<p align="center">general purpose headless minecraft bot written in javascript</p>
+<p align="center">
+    <img src="https://skillicons.dev/icons?i=js,nodejs,npm" />
+</p>
 
 ## dependencies:
 - nodejs (v20 LTS)
@@ -7,15 +10,4 @@ general purpose headless minecraft bot written in javascript
 - a competent wifi connection
 - a microsoft account (if using MS auth)
 
-### how to install (npm)
-assuming you are already in the file path in a terminal, run "npm install" to install all dependencies.
-
-### how to run (node)
-once it's installed all of the dependencies and you have a good configuration for the bot, it can enter the game with:
-
-```js
-node app.js
-```
-
-### how to configure
-coming soon!
+### still in development, don't download unless you know what you're doing :p
