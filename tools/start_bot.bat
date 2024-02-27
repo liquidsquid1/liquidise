@@ -4,4 +4,3 @@ cd ..
 cd src
 node app.js
 pause
-exit

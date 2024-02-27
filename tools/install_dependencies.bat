@@ -5,4 +5,3 @@ npm install --verbose
 title ALL FINISHED
 echo ALL FINISHED
 pause
-exit
