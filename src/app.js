@@ -8,6 +8,7 @@
 // a general purpose headless minecraft bot written in javascript
 
 const mineflayer = require('mineflayer');
+const minecraftHawkEye = require('minecrafthawkeye');
 const mineflayerViewer = require('prismarine-viewer').mineflayer;
 const mineflayerPVP = require('mineflayer-pvp').plugin;
 const mineflayerArmorManager = require('mineflayer-armor-manager');
@@ -24,20 +25,26 @@ let mcData;
 let rotations = true;
 let attackNearbyPlayers = false;
 let fightBot = false;
+let bowBot = false;
 
 function createNewBot(user) {
+    
     const bot = mineflayer.createBot({
         host: "localhost",
         port: 25565,
         auth: "offline",
         username: user,
+        checkTimeoutInterval: 2147483646, // This is *awful*, but hack around some upstream bugs related to timeouts https://github.com/PrismarineJS/mineflayer/issues/3292
+                                          // This means the bot will take an entire 2 and a half weeks to time out from a server, but thats funny so I don't care - luna
         plugins: [mineflayerDashboard, pathfinder, mineflayerPVP, mineflayerArmorManager, mineflayerCollectBlock],
     });
 
     bot.on('spawn', () => {
 
         mcData = require('minecraft-data')(bot.version);
+        bot.loadPlugin(minecraftHawkEye);
         global.console.log = bot.dashboard.log;
+        global.console.warn = bot.dashboard.log;
         global.console.error = bot.dashboard.log;
         let botMovements = new Movements(bot);
         botMovements.canDig = true;
@@ -67,7 +74,7 @@ function createNewBot(user) {
             fightBotTick(bot, 3);
         }
     })
-    
+
     bot.on("kicked", console.log);
     bot.on("chat", (username, message) => {
         bot.dashboard.log(`${username}: ${message}`);
@@ -99,9 +106,6 @@ function fightBotTick(bot, range) {
 }
 
 function readyCommands(bot) {
-    bot.dashboard.commands['echo'] = (...words) => {
-        bot.chat(words.join(" "));
-    }
     bot.dashboard.commands['coords'] = () => {
         console.log("current x: " + bot.entity.position.x);
         console.log("current y: " + bot.entity.position.y);
@@ -130,6 +134,15 @@ function readyCommands(bot) {
     bot.dashboard.commands['fightbot'] = () => {
         fightBot = !fightBot;
         console.log("fightbot: " + fightBot);
+    }
+    bot.dashboard.commands['bowbot'] = () => {
+        bowBot = !bowBot;
+        console.log("bowbot: " + bowBot);
+        if (bowBot) {
+            bot.hawkEye.autoAttack(bot.hawkEye.getPlayer(), 'bow');
+        } else {
+            bot.hawkEye.stop();
+        }
     }
     bot.dashboard.commands['web'] = (port) => {
         mineflayerViewer(bot, {
