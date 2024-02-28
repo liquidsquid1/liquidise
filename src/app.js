@@ -34,6 +34,8 @@ function createNewBot(user) {
         port: 25565,
         auth: "offline",
         username: user,
+        checkTimeoutInterval: 2147483646, // This is *awful*, but hack around some upstream bugs related to timeouts https://github.com/PrismarineJS/mineflayer/issues/3292
+                                          // This means the bot will take an entire 2 and a half weeks to time out from a server, but thats funny so I don't care - luna
         plugins: [mineflayerDashboard, pathfinder, mineflayerPVP, mineflayerArmorManager, mineflayerCollectBlock],
     });
 
