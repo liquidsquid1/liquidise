@@ -1,6 +1,6 @@
 {
     "name": "liquidise",
-    "version": "0.0.1",
+    "version": "0.1.1-dev",
     "description": "a general purpose headless minecraft bot written in javascript",
     "main": "app.js",
     "scripts": {
