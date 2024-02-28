@@ -8,6 +8,7 @@
 // a general purpose headless minecraft bot written in javascript
 
 const mineflayer = require('mineflayer');
+const minecraftHawkEye = require('minecrafthawkeye');
 const mineflayerViewer = require('prismarine-viewer').mineflayer;
 const mineflayerPVP = require('mineflayer-pvp').plugin;
 const mineflayerArmorManager = require('mineflayer-armor-manager');
@@ -24,8 +25,10 @@ let mcData;
 let rotations = true;
 let attackNearbyPlayers = false;
 let fightBot = false;
+let bowBot = false;
 
 function createNewBot(user) {
+    
     const bot = mineflayer.createBot({
         host: "localhost",
         port: 25565,
@@ -37,7 +40,9 @@ function createNewBot(user) {
     bot.on('spawn', () => {
 
         mcData = require('minecraft-data')(bot.version);
+        bot.loadPlugin(minecraftHawkEye);
         global.console.log = bot.dashboard.log;
+        global.console.warn = bot.dashboard.log;
         global.console.error = bot.dashboard.log;
         let botMovements = new Movements(bot);
         botMovements.canDig = true;
@@ -67,7 +72,7 @@ function createNewBot(user) {
             fightBotTick(bot, 3);
         }
     })
-    
+
     bot.on("kicked", console.log);
     bot.on("chat", (username, message) => {
         bot.dashboard.log(`${username}: ${message}`);
@@ -99,9 +104,6 @@ function fightBotTick(bot, range) {
 }
 
 function readyCommands(bot) {
-    bot.dashboard.commands['echo'] = (...words) => {
-        bot.chat(words.join(" "));
-    }
     bot.dashboard.commands['coords'] = () => {
         console.log("current x: " + bot.entity.position.x);
         console.log("current y: " + bot.entity.position.y);
@@ -130,6 +132,15 @@ function readyCommands(bot) {
     bot.dashboard.commands['fightbot'] = () => {
         fightBot = !fightBot;
         console.log("fightbot: " + fightBot);
+    }
+    bot.dashboard.commands['bowbot'] = () => {
+        bowBot = !bowBot;
+        console.log("bowbot: " + bowBot);
+        if (bowBot) {
+            bot.hawkEye.autoAttack(bot.hawkEye.getPlayer(), 'bow');
+        } else {
+            bot.hawkEye.stop();
+        }
     }
     bot.dashboard.commands['web'] = (port) => {
         mineflayerViewer(bot, {
