@@ -69,6 +69,9 @@ function createNewBot(user) {
     })
     
     bot.on("kicked", console.log);
+    bot.on("chat", (username, message) => {
+        bot.dashboard.log(`${username}: ${message}`);
+    });
 }
 
 function killauraTick(bot, range) {
@@ -88,22 +91,10 @@ function killauraTick(bot, range) {
 }
 
 function fightBotTick(bot, range) {
+    killauraTick(bot, range);
     let entity = bot.nearestEntity();
-    if (entity !== null) {
-        if (entity.type === "player") {
-            if (bot.entity.position.distanceTo(entity.position) <= range) {
-                let pos = entity.position.offset(0, entity.height, 0);
-
-                if (rotations) {
-                    bot.lookAt(pos, true);
-                }
-                bot.attack(entity);
-            } else {
-                if (!bot.pathfinder.goal) {
-                    bot.pathfinder.setGoal(new GoalNear(entity.position.x, entity.position.y, entity.position.z, range));
-                }
-            }
-        }
+    if (entity !== null && entity.type === "player") {
+        bot.pathfinder.setGoal(new GoalFollow(entity, range));
     }
 }
 
