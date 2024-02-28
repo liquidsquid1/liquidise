@@ -10,9 +10,7 @@
 const mineflayer = require('mineflayer');
 const minecraftHawkEye = require('minecrafthawkeye');
 const mineflayerViewer = require('prismarine-viewer').mineflayer;
-const mineflayerPVP = require('mineflayer-pvp').plugin;
 const mineflayerArmorManager = require('mineflayer-armor-manager');
-const mineflayerCollectBlock = require('mineflayer-collectblock').plugin;
 const mineflayerDashboard = require('mineflayer-dashboard');
 const { pathfinder, Movements } = require('mineflayer-pathfinder');
 const { GoalNear, GoalFollow } = require('mineflayer-pathfinder').goals;
@@ -36,16 +34,24 @@ function createNewBot(user) {
         username: user,
         checkTimeoutInterval: 2147483646, // This is *awful*, but hack around some upstream bugs related to timeouts https://github.com/PrismarineJS/mineflayer/issues/3292
                                           // This means the bot will take an entire 2 and a half weeks to time out from a server, but thats funny so I don't care - luna
-        plugins: [mineflayerDashboard, pathfinder, mineflayerPVP, mineflayerArmorManager, mineflayerCollectBlock],
+        plugins: [
+            mineflayerDashboard, 
+            pathfinder, 
+            mineflayerArmorManager,
+            minecraftHawkEye
+        ],
     });
 
     bot.on('spawn', () => {
 
         mcData = require('minecraft-data')(bot.version);
-        bot.loadPlugin(minecraftHawkEye);
+
+        // change logging
         global.console.log = bot.dashboard.log;
         global.console.warn = bot.dashboard.log;
         global.console.error = bot.dashboard.log;
+
+        // define movements
         let botMovements = new Movements(bot);
         botMovements.canDig = true;
         botMovements.canOpenDoors = true;
@@ -61,6 +67,7 @@ function createNewBot(user) {
 
         bot.pathfinder.setMovements(botMovements);
 
+        // add commands to dashboard
         readyCommands(bot);
 
         // require('child_process').exec('start http://localhost:8080/'); // OPENING VIEWER - THIS ISNT MALWARE
