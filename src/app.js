@@ -88,28 +88,30 @@ function createNewBot(user) {
     });
 }
 
-function killauraTick(bot, range) {
-    let entity = bot.nearestEntity();
-    if (entity !== null) {
-        if (entity.type === "player") {
-            if (bot.entity.position.distanceTo(entity.position) <= range) {
-                let pos = entity.position.offset(0, entity.height, 0);
+function locateNearestPlayer(bot) {
+    let mobFilter = (e) => e.type === 'player';
+    let player = bot.nearestEntity(mobFilter);
+    return player;
+}
 
-                if (rotations) {
-                    bot.lookAt(pos, true);
-                }
-                bot.attack(entity);
-            }
-        }
-    }
+function killauraTick(bot, range) {
+    entity = locateNearestPlayer(bot);
+    if (!entity) { return; }
+    let pos = entity.position.offset(0, entity.height, 0);
+
+    if (bot.entity.position.distanceTo(entity.position) > range) { return; }
+    if (rotations) { bot.lookAt(pos, true); }
+    bot.attack(entity);
+    return entity;
 }
 
 function fightBotTick(bot, range) {
     killauraTick(bot, range);
-    let entity = bot.nearestEntity();
-    if (entity !== null && entity.type === "player") {
-        bot.pathfinder.setGoal(new GoalFollow(entity, range));
-    }
+
+    entity = locateNearestPlayer(bot);
+    if (!entity) { return; }
+
+    bot.pathfinder.setGoal(new GoalFollow(entity, range));
 }
 
 function readyCommands(bot) {
@@ -146,7 +148,7 @@ function readyCommands(bot) {
         bowBot = !bowBot;
         console.log("bowbot: " + bowBot);
         if (bowBot) {
-            bot.hawkEye.autoAttack(bot.hawkEye.getPlayer(), 'bow');
+            bot.hawkEye.autoAttack(locateNearestPlayer(), 'bow');
         } else {
             bot.hawkEye.stop();
         }
