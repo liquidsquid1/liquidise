@@ -16,8 +16,6 @@ const { pathfinder, Movements } = require('mineflayer-pathfinder');
 const { GoalNear, GoalFollow } = require('mineflayer-pathfinder').goals;
 const path = require('path');
 
-let botUsername = "liquidise0";
-
 let mcData;
 
 let config = require(path.join(".", "..", "config", "config.json"));
@@ -33,7 +31,7 @@ function createNewBot(user) {
     const bot = mineflayer.createBot({
         host: config.connection.server,
         port: config.connection.port,
-        auth: "offline",
+        auth: config.connection.authentication,
         username: user,
         checkTimeoutInterval: 2147483646, // This is *awful*, but hack around some upstream bugs related to timeouts https://github.com/PrismarineJS/mineflayer/issues/3292
                                           // This means the bot will take an entire 2 and a half weeks to time out from a server, but thats funny so I don't care - luna

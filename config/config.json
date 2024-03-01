@@ -2,7 +2,8 @@
     "connection": {
         "username": "liquidise0",
         "server": "localhost",
-        "port": 25565
+        "port": 25565,
+        "authentication": "offline"
     },
     "default_modules": {
         "rotations": true,
