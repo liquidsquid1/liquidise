@@ -1,0 +1,12 @@
+{
+    "default_modules": {
+        "rotations": true,
+        "killAura": false,
+        "fightBot": false,
+        "bowBot": false
+    },
+    "combat": {
+        "reach": 3,
+        "target": "player"
+    }
+}

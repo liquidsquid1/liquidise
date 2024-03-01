@@ -14,16 +14,19 @@ const mineflayerArmorManager = require('mineflayer-armor-manager');
 const mineflayerDashboard = require('mineflayer-dashboard');
 const { pathfinder, Movements } = require('mineflayer-pathfinder');
 const { GoalNear, GoalFollow } = require('mineflayer-pathfinder').goals;
+const path = require('path');
 
 let botUsername = "liquidise0";
 
 let mcData;
 
+let config = require(path.join(".", "..", "config", "config.json"));
+
 // settings, the code becomes unreadable from here :3
-let rotations = true;
-let attackNearbyPlayers = false;
-let fightBot = false;
-let bowBot = false;
+let rotations = config.default_modules.rotations;
+let killAura = config.default_modules.killAura;
+let fightBot = config.default_modules.fightBot;
+let bowBot = config.default_modules.bowBot;
 
 function createNewBot(user) {
     
@@ -74,11 +77,11 @@ function createNewBot(user) {
     })
 
     bot.on('physicsTick', () => {
-        if (attackNearbyPlayers) {
-            killauraTick(bot, 3);
+        if (killAura) {
+            killauraTick(bot, config.combat.reach);
         }
         if (fightBot) {
-            fightBotTick(bot, 3);
+            fightBotTick(bot, config.combat.reach);
         }
     })
 
@@ -89,7 +92,7 @@ function createNewBot(user) {
 }
 
 function locateNearestPlayer(bot) {
-    let mobFilter = (e) => e.type === 'player';
+    let mobFilter = (e) => e.type === config.combat.target;
     let player = bot.nearestEntity(mobFilter);
     return player;
 }
@@ -133,8 +136,8 @@ function readyCommands(bot) {
         bot.pathfinder.setGoal(new GoalNear(x, y, z));
     }
     bot.dashboard.commands['killaura'] = () => {
-        attackNearbyPlayers = !attackNearbyPlayers;
-        console.log("killaura: " + attackNearbyPlayers);
+        killAura = !killAura;
+        console.log("killaura: " + killAura);
     }
     bot.dashboard.commands['rotations'] = () => {
         rotations = !rotations;
