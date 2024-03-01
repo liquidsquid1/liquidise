@@ -1,4 +1,9 @@
 {
+    "connection": {
+        "username": "liquidise0",
+        "server": "localhost",
+        "port": 25565
+    },
     "default_modules": {
         "rotations": true,
         "killAura": false,

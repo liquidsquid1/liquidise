@@ -31,8 +31,8 @@ let bowBot = config.default_modules.bowBot;
 function createNewBot(user) {
     
     const bot = mineflayer.createBot({
-        host: "localhost",
-        port: 25565,
+        host: config.connection.server,
+        port: config.connection.port,
         auth: "offline",
         username: user,
         checkTimeoutInterval: 2147483646, // This is *awful*, but hack around some upstream bugs related to timeouts https://github.com/PrismarineJS/mineflayer/issues/3292
@@ -168,4 +168,4 @@ function readyCommands(bot) {
     }
 }
 
-createNewBot(botUsername);
+createNewBot(config.connection.username);
