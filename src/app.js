@@ -16,6 +16,8 @@ const { pathfinder, Movements } = require('mineflayer-pathfinder');
 const { GoalNear, GoalFollow } = require('mineflayer-pathfinder').goals;
 const path = require('path');
 
+let botUsername = "liquidise0";
+
 let mcData;
 
 let config = require(path.join(".", "..", "config", "config.json"));
@@ -25,6 +27,8 @@ let rotations = config.default_modules.rotations;
 let killAura = config.default_modules.killAura;
 let fightBot = config.default_modules.fightBot;
 let bowBot = config.default_modules.bowBot;
+let freeze = false;
+let freezePos;
 
 function createNewBot(user) {
     
@@ -80,6 +84,9 @@ function createNewBot(user) {
         }
         if (fightBot) {
             fightBotTick(bot, config.combat.reach);
+        }
+        if (freeze) {
+            bot.entity.position = freezePos;
         }
     })
 
@@ -164,6 +171,13 @@ function readyCommands(bot) {
     bot.dashboard.commands['vclip'] = (dist) => {
         bot.entity.position = bot.entity.position.offset(0, parseInt(dist), 0);
     }
+    bot.dashboard.commands['freeze'] = () => {
+        freeze = !freeze;
+        console.log("freeze: " + freeze);
+        if (freeze) {
+            freezePos = bot.entity.position;
+        }
+    }
 }
 
-createNewBot(config.connection.username);
+createNewBot(botUsername);
